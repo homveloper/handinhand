@@ -1,0 +1,6 @@
+# uv 설정 파일
+# 개발 환경 설정
+index-url = "https://pypi.org/simple"
+
+# 캐시 설정 
+cache-dir = ".uv-cache"
