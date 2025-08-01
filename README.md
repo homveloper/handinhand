@@ -34,18 +34,21 @@ graph TB
     style CSharp fill:#fff,stroke:#333,stroke-width:2px
 ```
 
+📖 **상세 아키텍처 문서**: [document/architecture.md](./document/architecture.md)
+
 ## 🛠️ 기술 스택
 
 ### 공통 기술
 - **HTTP 서버** - RESTful API 엔드포인트
 - **SSE** - 실시간 통신을 위한 Server-Sent Events
 - **JSON-RPC 2.0** - 표준화된 요청/응답 포맷
-- **Swagger** - API 문서화
+- **OpenRPC** - JSON RPC 2.0 API 문서화 (Swagger UI 스타일)
 - **Redis** - 공유 캐시, 세션 및 영구 저장소
 - **Docker** - 각 서버의 컨테이너화
 - **NGINX** - 리버스 프록시 및 로드 밸런서
 - **WebAssembly** - 성능이 중요한 작업 처리
 - **JSON Schema** - 공유 데이터 검증
+- **quicktype** - JSON Schema에서 4개 언어 코드 자동 생성
 
 ### 언어별 프레임워크
 
@@ -105,9 +108,9 @@ curl http://localhost/api/health  # 무작위로 다른 서버에 요청
 ## 📋 공통 API 엔드포인트
 모든 서버가 동일하게 구현하는 엔드포인트:
 - `GET /api/health` - 헬스 체크
-- `POST /api/rpc` - JSON-RPC 2.0 엔드포인트
+- `POST /api/jsonrpc` - JSON-RPC 2.0 엔드포인트
 - `GET /api/events` - SSE 엔드포인트
-- `GET /api/docs` - Swagger 문서
+- `GET /docs` - OpenRPC Playground UI (API 문서화)
 
 ## 🔧 개발
 각 서버를 독립적으로 개발 실행:
