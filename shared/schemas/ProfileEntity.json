@@ -1,0 +1,39 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "https://handinhand.com/schemas/ProfileEntity.json",
+  "title": "Profile Entity",
+  "description": "User profile information entity",
+  "type": "object",
+  "required": ["nickname", "level", "exp", "avatar", "created_at"],
+  "properties": {
+    "nickname": {
+      "type": "string",
+      "minLength": 1,
+      "maxLength": 50,
+      "description": "User nickname"
+    },
+    "level": {
+      "type": "integer",
+      "minimum": 1,
+      "maximum": 100,
+      "description": "User level"
+    },
+    "exp": {
+      "type": "integer",
+      "minimum": 0,
+      "description": "Experience points"
+    },
+    "avatar": {
+      "type": "string",
+      "minLength": 1,
+      "maxLength": 100,
+      "description": "Avatar identifier"
+    },
+    "created_at": {
+      "type": "string",
+      "format": "date-time",
+      "description": "Account creation timestamp"
+    }
+  },
+  "additionalProperties": false
+}

@@ -1,0 +1,250 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "https://handinhand.com/schemas/ServerConfig.json",
+  "title": "Hand in Hand Server Configuration",
+  "description": "Configuration schema for all 4 language servers (Node.js, Python, Go, C#)",
+  "type": "object",
+  "required": ["environment", "debug", "servers", "redis", "nginx", "cors", "logging", "api", "sse", "jsonrpc"],
+  "properties": {
+    "environment": {
+      "type": "string",
+      "enum": ["development", "testing", "production"],
+      "description": "Current environment"
+    },
+    "debug": {
+      "type": "boolean",
+      "description": "Enable debug mode"
+    },
+    "servers": {
+      "type": "object",
+      "required": ["nodejs", "python", "golang", "csharp"],
+      "properties": {
+        "nodejs": {
+          "$ref": "#/definitions/ServerInfo"
+        },
+        "python": {
+          "$ref": "#/definitions/ServerInfo"
+        },
+        "golang": {
+          "$ref": "#/definitions/ServerInfo"
+        },
+        "csharp": {
+          "$ref": "#/definitions/ServerInfo"
+        }
+      }
+    },
+    "redis": {
+      "type": "object",
+      "required": ["host", "port", "db"],
+      "properties": {
+        "host": {
+          "type": "string",
+          "description": "Redis host address"
+        },
+        "port": {
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 65535,
+          "description": "Redis port number"
+        },
+        "db": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 15,
+          "description": "Redis database number"
+        },
+        "password": {
+          "type": "string",
+          "description": "Redis password (optional)"
+        },
+        "retry_delay_on_failover": {
+          "type": "integer",
+          "minimum": 0,
+          "description": "Retry delay in milliseconds"
+        },
+        "max_retries_per_request": {
+          "type": "integer",
+          "minimum": 0,
+          "description": "Maximum retry attempts per request"
+        }
+      }
+    },
+    "nginx": {
+      "type": "object",
+      "required": ["port", "upstream_name", "health_check_path"],
+      "properties": {
+        "port": {
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 65535,
+          "description": "NGINX listen port"
+        },
+        "upstream_name": {
+          "type": "string",
+          "description": "NGINX upstream name"
+        },
+        "health_check_path": {
+          "type": "string",
+          "pattern": "^/.*",
+          "description": "Health check endpoint path"
+        }
+      }
+    },
+    "cors": {
+      "type": "object",
+      "required": ["allowed_origins", "allowed_methods", "allowed_headers", "allow_credentials"],
+      "properties": {
+        "allowed_origins": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          },
+          "description": "Allowed CORS origins"
+        },
+        "allowed_methods": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "enum": ["GET", "POST", "PUT", "DELETE", "OPTIONS", "HEAD", "PATCH"]
+          },
+          "description": "Allowed HTTP methods"
+        },
+        "allowed_headers": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          },
+          "description": "Allowed HTTP headers"
+        },
+        "allow_credentials": {
+          "type": "boolean",
+          "description": "Allow credentials in CORS requests"
+        }
+      }
+    },
+    "logging": {
+      "type": "object",
+      "required": ["level", "format", "file_enabled", "console_enabled"],
+      "properties": {
+        "level": {
+          "type": "string",
+          "enum": ["debug", "info", "warn", "error"],
+          "description": "Logging level"
+        },
+        "format": {
+          "type": "string",
+          "enum": ["json", "text"],
+          "description": "Log format"
+        },
+        "file_enabled": {
+          "type": "boolean",
+          "description": "Enable file logging"
+        },
+        "console_enabled": {
+          "type": "boolean",
+          "description": "Enable console logging"
+        }
+      }
+    },
+    "api": {
+      "type": "object",
+      "required": ["base_path", "version", "swagger_enabled", "rate_limit"],
+      "properties": {
+        "base_path": {
+          "type": "string",
+          "pattern": "^/.*",
+          "description": "API base path"
+        },
+        "version": {
+          "type": "string",
+          "pattern": "^v\\d+$",
+          "description": "API version"
+        },
+        "swagger_enabled": {
+          "type": "boolean",
+          "description": "Enable Swagger documentation"
+        },
+        "rate_limit": {
+          "type": "object",
+          "required": ["window_ms", "max_requests"],
+          "properties": {
+            "window_ms": {
+              "type": "integer",
+              "minimum": 1000,
+              "description": "Rate limit window in milliseconds"
+            },
+            "max_requests": {
+              "type": "integer",
+              "minimum": 1,
+              "description": "Maximum requests per window"
+            }
+          }
+        }
+      }
+    },
+    "sse": {
+      "type": "object",
+      "required": ["heartbeat_interval", "reconnect_timeout", "max_connections"],
+      "properties": {
+        "heartbeat_interval": {
+          "type": "integer",
+          "minimum": 1000,
+          "description": "SSE heartbeat interval in milliseconds"
+        },
+        "reconnect_timeout": {
+          "type": "integer",
+          "minimum": 1000,
+          "description": "SSE reconnect timeout in milliseconds"
+        },
+        "max_connections": {
+          "type": "integer",
+          "minimum": 1,
+          "description": "Maximum SSE connections"
+        }
+      }
+    },
+    "jsonrpc": {
+      "type": "object",
+      "required": ["version", "batch_limit", "timeout"],
+      "properties": {
+        "version": {
+          "type": "string",
+          "enum": ["2.0"],
+          "description": "JSON-RPC version"
+        },
+        "batch_limit": {
+          "type": "integer",
+          "minimum": 1,
+          "description": "Maximum batch request size"
+        },
+        "timeout": {
+          "type": "integer",
+          "minimum": 1000,
+          "description": "Request timeout in milliseconds"
+        }
+      }
+    }
+  },
+  "definitions": {
+    "ServerInfo": {
+      "type": "object",
+      "required": ["port", "host", "name"],
+      "properties": {
+        "port": {
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 65535,
+          "description": "Server port number"
+        },
+        "host": {
+          "type": "string",
+          "description": "Server host address"
+        },
+        "name": {
+          "type": "string",
+          "description": "Server name"
+        }
+      }
+    }
+  }
+}

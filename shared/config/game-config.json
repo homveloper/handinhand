@@ -1,0 +1,74 @@
+{
+  "game": {
+    "initial_user_stats": {
+      "profile": {
+        "level": 1,
+        "exp": 0,
+        "gold": 1000,
+        "gems": 0,
+        "avatar": "default"
+      },
+      "inventory": {
+        "capacity": 100,
+        "items": []
+      },
+      "mail": {
+        "max_inbox_size": 100,
+        "auto_delete_days": 30
+      },
+      "progress": {
+        "current_stage": 1,
+        "completed_quests": [],
+        "achievements": [],
+        "daily_missions": []
+      },
+      "settings": {
+        "sound_enabled": true,
+        "music_enabled": true,
+        "language": "ko",
+        "auto_save": true,
+        "notifications": true
+      }
+    },
+    "level_system": {
+      "exp_per_level": 1000,
+      "max_level": 100,
+      "level_rewards": {
+        "gold_multiplier": 100,
+        "gem_bonus": 10
+      }
+    },
+    "items": {
+      "max_stack_size": 999,
+      "rarity_levels": ["common", "uncommon", "rare", "epic", "legendary"],
+      "auto_sell_common": false
+    },
+    "events": {
+      "broadcast_level_up": true,
+      "broadcast_achievement": true,
+      "broadcast_rare_item": true,
+      "save_event_history": true,
+      "max_event_history": 1000
+    }
+  },
+  "business_rules": {
+    "concurrency": {
+      "max_retry_attempts": 5,
+      "base_retry_delay_ms": 50,
+      "max_retry_delay_ms": 1000,
+      "exponential_backoff": true
+    },
+    "data_validation": {
+      "strict_schema_validation": true,
+      "sanitize_input": true,
+      "max_string_length": 1000,
+      "max_array_length": 1000
+    },
+    "security": {
+      "hash_algorithm": "bcrypt",
+      "salt_rounds": 12,
+      "session_timeout_hours": 24,
+      "max_login_attempts": 5
+    }
+  }
+}

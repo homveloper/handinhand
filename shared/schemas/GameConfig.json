@@ -1,0 +1,300 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "https://handinhand.com/schemas/GameConfig.json",
+  "title": "Hand in Hand Game Configuration",
+  "description": "Game rules and business logic configuration schema",
+  "type": "object",
+  "required": ["game", "business_rules"],
+  "properties": {
+    "game": {
+      "type": "object",
+      "required": ["initial_user_stats", "level_system", "items", "events"],
+      "properties": {
+        "initial_user_stats": {
+          "$ref": "#/definitions/InitialUserStats"
+        },
+        "level_system": {
+          "type": "object",
+          "required": ["exp_per_level", "max_level", "level_rewards"],
+          "properties": {
+            "exp_per_level": {
+              "type": "integer",
+              "minimum": 1,
+              "description": "Experience points required per level"
+            },
+            "max_level": {
+              "type": "integer",
+              "minimum": 1,
+              "description": "Maximum achievable level"
+            },
+            "level_rewards": {
+              "type": "object",
+              "required": ["gold_multiplier", "gem_bonus"],
+              "properties": {
+                "gold_multiplier": {
+                  "type": "integer",
+                  "minimum": 1,
+                  "description": "Gold reward multiplier per level"
+                },
+                "gem_bonus": {
+                  "type": "integer",
+                  "minimum": 0,
+                  "description": "Gem bonus per level"
+                }
+              }
+            }
+          }
+        },
+        "items": {
+          "type": "object",
+          "required": ["max_stack_size", "rarity_levels", "auto_sell_common"],
+          "properties": {
+            "max_stack_size": {
+              "type": "integer",
+              "minimum": 1,
+              "description": "Maximum items per stack"
+            },
+            "rarity_levels": {
+              "type": "array",
+              "items": {
+                "type": "string"
+              },
+              "description": "Item rarity levels"
+            },
+            "auto_sell_common": {
+              "type": "boolean",
+              "description": "Auto-sell common items"
+            }
+          }
+        },
+        "events": {
+          "type": "object",
+          "required": ["broadcast_level_up", "broadcast_achievement", "broadcast_rare_item", "save_event_history", "max_event_history"],
+          "properties": {
+            "broadcast_level_up": {
+              "type": "boolean",
+              "description": "Broadcast level up events"
+            },
+            "broadcast_achievement": {
+              "type": "boolean",
+              "description": "Broadcast achievement events"
+            },
+            "broadcast_rare_item": {
+              "type": "boolean",
+              "description": "Broadcast rare item acquisition"
+            },
+            "save_event_history": {
+              "type": "boolean",
+              "description": "Save event history"
+            },
+            "max_event_history": {
+              "type": "integer",
+              "minimum": 0,
+              "description": "Maximum event history entries"
+            }
+          }
+        }
+      }
+    },
+    "business_rules": {
+      "type": "object",
+      "required": ["concurrency", "data_validation", "security"],
+      "properties": {
+        "concurrency": {
+          "type": "object",
+          "required": ["max_retry_attempts", "base_retry_delay_ms", "max_retry_delay_ms", "exponential_backoff"],
+          "properties": {
+            "max_retry_attempts": {
+              "type": "integer",
+              "minimum": 1,
+              "description": "Maximum retry attempts for optimistic concurrency control"
+            },
+            "base_retry_delay_ms": {
+              "type": "integer",
+              "minimum": 1,
+              "description": "Base retry delay in milliseconds"
+            },
+            "max_retry_delay_ms": {
+              "type": "integer",
+              "minimum": 1,
+              "description": "Maximum retry delay in milliseconds"
+            },
+            "exponential_backoff": {
+              "type": "boolean",
+              "description": "Use exponential backoff for retries"
+            }
+          }
+        },
+        "data_validation": {
+          "type": "object",
+          "required": ["strict_schema_validation", "sanitize_input", "max_string_length", "max_array_length"],
+          "properties": {
+            "strict_schema_validation": {
+              "type": "boolean",
+              "description": "Enable strict JSON schema validation"
+            },
+            "sanitize_input": {
+              "type": "boolean",
+              "description": "Sanitize user input"
+            },
+            "max_string_length": {
+              "type": "integer",
+              "minimum": 1,
+              "description": "Maximum string length"
+            },
+            "max_array_length": {
+              "type": "integer",
+              "minimum": 1,
+              "description": "Maximum array length"
+            }
+          }
+        },
+        "security": {
+          "type": "object",
+          "required": ["hash_algorithm", "salt_rounds", "session_timeout_hours", "max_login_attempts"],
+          "properties": {
+            "hash_algorithm": {
+              "type": "string",
+              "enum": ["bcrypt", "scrypt", "argon2"],
+              "description": "Password hashing algorithm"
+            },
+            "salt_rounds": {
+              "type": "integer",
+              "minimum": 4,
+              "maximum": 20,
+              "description": "Salt rounds for password hashing"
+            },
+            "session_timeout_hours": {
+              "type": "integer",
+              "minimum": 1,
+              "description": "Session timeout in hours"
+            },
+            "max_login_attempts": {
+              "type": "integer",
+              "minimum": 1,
+              "description": "Maximum login attempts before lockout"
+            }
+          }
+        }
+      }
+    }
+  },
+  "definitions": {
+    "InitialUserStats": {
+      "type": "object",
+      "required": ["profile", "inventory", "mail", "progress", "settings"],
+      "properties": {
+        "profile": {
+          "type": "object",
+          "required": ["level", "exp", "gold", "gems", "avatar"],
+          "properties": {
+            "level": {
+              "type": "integer",
+              "minimum": 1,
+              "description": "Initial user level"
+            },
+            "exp": {
+              "type": "integer",
+              "minimum": 0,
+              "description": "Initial experience points"
+            },
+            "gold": {
+              "type": "integer",
+              "minimum": 0,
+              "description": "Initial gold amount"
+            },
+            "gems": {
+              "type": "integer",
+              "minimum": 0,
+              "description": "Initial gem amount"
+            },
+            "avatar": {
+              "type": "string",
+              "description": "Default avatar identifier"
+            }
+          }
+        },
+        "inventory": {
+          "type": "object",
+          "required": ["capacity", "items"],
+          "properties": {
+            "capacity": {
+              "type": "integer",
+              "minimum": 1,
+              "description": "Initial inventory capacity"
+            },
+            "items": {
+              "type": "array",
+              "description": "Initial items (empty array)"
+            }
+          }
+        },
+        "mail": {
+          "type": "object",
+          "required": ["max_inbox_size", "auto_delete_days"],
+          "properties": {
+            "max_inbox_size": {
+              "type": "integer",
+              "minimum": 1,
+              "description": "Maximum inbox capacity"
+            },
+            "auto_delete_days": {
+              "type": "integer",
+              "minimum": 1,
+              "description": "Auto-delete mails after N days"
+            }
+          }
+        },
+        "progress": {
+          "type": "object",
+          "required": ["current_stage", "completed_quests", "achievements", "daily_missions"],
+          "properties": {
+            "current_stage": {
+              "type": "integer",
+              "minimum": 1,
+              "description": "Initial stage"
+            },
+            "completed_quests": {
+              "type": "array",
+              "description": "Initial completed quests (empty)"
+            },
+            "achievements": {
+              "type": "array",
+              "description": "Initial achievements (empty)"
+            },
+            "daily_missions": {
+              "type": "array",
+              "description": "Initial daily missions (empty)"
+            }
+          }
+        },
+        "settings": {
+          "type": "object",
+          "required": ["sound_enabled", "music_enabled", "language", "auto_save", "notifications"],
+          "properties": {
+            "sound_enabled": {
+              "type": "boolean",
+              "description": "Sound effects enabled"
+            },
+            "music_enabled": {
+              "type": "boolean",
+              "description": "Background music enabled"
+            },
+            "language": {
+              "type": "string",
+              "description": "Default language code"
+            },
+            "auto_save": {
+              "type": "boolean",
+              "description": "Auto-save enabled"
+            },
+            "notifications": {
+              "type": "boolean",
+              "description": "Push notifications enabled"
+            }
+          }
+        }
+      }
+    }
+  }
+}

@@ -1,0 +1,70 @@
+{
+  "environment": "development",
+  "debug": true,
+  "servers": {
+    "nodejs": {
+      "port": 3001,
+      "host": "0.0.0.0",
+      "name": "nodejs-server"
+    },
+    "python": {
+      "port": 3002,
+      "host": "0.0.0.0",
+      "name": "python-server"
+    },
+    "golang": {
+      "port": 3003,
+      "host": "0.0.0.0",
+      "name": "golang-server"
+    },
+    "csharp": {
+      "port": 3004,
+      "host": "0.0.0.0",
+      "name": "csharp-server"
+    }
+  },
+  "redis": {
+    "host": "localhost",
+    "port": 6379,
+    "db": 0,
+    "password": "",
+    "retry_delay_on_failover": 100,
+    "max_retries_per_request": 3
+  },
+  "nginx": {
+    "port": 80,
+    "upstream_name": "backend",
+    "health_check_path": "/api/health"
+  },
+  "cors": {
+    "allowed_origins": ["http://localhost:3000", "http://localhost:8080"],
+    "allowed_methods": ["GET", "POST", "PUT", "DELETE", "OPTIONS"],
+    "allowed_headers": ["Content-Type", "Authorization", "X-Request-ID"],
+    "allow_credentials": true
+  },
+  "logging": {
+    "level": "debug",
+    "format": "json",
+    "file_enabled": false,
+    "console_enabled": true
+  },
+  "api": {
+    "base_path": "/api",
+    "version": "v1",
+    "swagger_enabled": true,
+    "rate_limit": {
+      "window_ms": 900000,
+      "max_requests": 1000
+    }
+  },
+  "sse": {
+    "heartbeat_interval": 30000,
+    "reconnect_timeout": 5000,
+    "max_connections": 1000
+  },
+  "jsonrpc": {
+    "version": "2.0",
+    "batch_limit": 10,
+    "timeout": 30000
+  }
+}

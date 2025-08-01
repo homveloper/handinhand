@@ -1,0 +1,74 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "https://handinhand.com/schemas/InventoryEntity.json",
+  "title": "Inventory Entity",
+  "description": "User inventory information entity",
+  "type": "object",
+  "required": ["items", "gold", "gems", "capacity"],
+  "properties": {
+    "items": {
+      "type": "array",
+      "items": {
+        "$ref": "#/definitions/Item"
+      },
+      "maxItems": 1000,
+      "description": "List of items in inventory"
+    },
+    "gold": {
+      "type": "integer",
+      "minimum": 0,
+      "maximum": 999999999,
+      "description": "Gold amount"
+    },
+    "gems": {
+      "type": "integer",
+      "minimum": 0,
+      "maximum": 999999999,
+      "description": "Gem amount"
+    },
+    "capacity": {
+      "type": "integer",
+      "minimum": 1,
+      "maximum": 1000,
+      "description": "Maximum inventory capacity"
+    }
+  },
+  "additionalProperties": false,
+  "definitions": {
+    "Item": {
+      "type": "object",
+      "required": ["id", "quantity"],
+      "properties": {
+        "id": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 100,
+          "description": "Item identifier"
+        },
+        "quantity": {
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 999,
+          "description": "Item quantity"
+        },
+        "level": {
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 100,
+          "description": "Item level (optional)"
+        },
+        "rarity": {
+          "type": "string",
+          "enum": ["common", "uncommon", "rare", "epic", "legendary"],
+          "description": "Item rarity (optional)"
+        },
+        "properties": {
+          "type": "object",
+          "description": "Additional item properties",
+          "additionalProperties": true
+        }
+      },
+      "additionalProperties": false
+    }
+  }
+}

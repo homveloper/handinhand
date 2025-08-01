@@ -1,0 +1,19 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "https://handinhand.com/schemas/UserAggregates.json",
+  "title": "User Aggregates",
+  "description": "Complete user data aggregates containing all game content",
+  "type": "object",
+  "required": ["profile", "inventory"],
+  "properties": {
+    "profile": {
+      "$ref": "ProfileEntity.json",
+      "description": "User profile information"
+    },
+    "inventory": {
+      "$ref": "InventoryEntity.json", 
+      "description": "User inventory information"
+    }
+  },
+  "additionalProperties": false
+}

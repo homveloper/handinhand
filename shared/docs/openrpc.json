@@ -1,0 +1,266 @@
+{
+  "openrpc": "1.2.6",
+  "info": {
+    "title": "Hand in Hand Game Server API",
+    "version": "1.0.0",
+    "description": "게임 서버 JSON RPC 2.0 API - 4개 언어 공용 스펙",
+    "contact": {
+      "name": "Hand in Hand Development Team"
+    },
+    "license": {
+      "name": "MIT"
+    }
+  },
+  "servers": [
+    {
+      "name": "Python Development Server",
+      "url": "http://localhost:3002/api/jsonrpc",
+      "description": "Python FastAPI 개발 서버"
+    },
+    {
+      "name": "Node.js Development Server", 
+      "url": "http://localhost:3001/api/jsonrpc",
+      "description": "Node.js Express 개발 서버"
+    },
+    {
+      "name": "Go Development Server",
+      "url": "http://localhost:3003/api/jsonrpc", 
+      "description": "Go Gin 개발 서버"
+    },
+    {
+      "name": "C# Development Server",
+      "url": "http://localhost:3004/api/jsonrpc",
+      "description": "C# ASP.NET Core 개발 서버"
+    }
+  ],
+  "methods": [
+    {
+      "name": "getUserAggregates",
+      "summary": "사용자 전체 데이터 조회",
+      "description": "사용자의 프로필과 인벤토리 정보를 포함한 전체 게임 데이터를 조회합니다.",
+      "tags": [
+        {
+          "name": "User"
+        }
+      ],
+      "params": [
+        {
+          "name": "userId",
+          "description": "조회할 사용자의 고유 ID",
+          "schema": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 50,
+            "pattern": "^[A-Za-z0-9_-]+$"
+          },
+          "required": true
+        }
+      ],
+      "result": {
+        "name": "UserAggregates",
+        "description": "사용자 프로필 + 인벤토리 데이터",
+        "schema": {
+          "$ref": "#/components/schemas/UserAggregates"
+        }
+      },
+      "errors": [
+        {
+          "code": -32602,
+          "message": "Invalid params",
+          "data": {
+            "description": "요청 파라미터가 잘못되었습니다 (userId 누락 또는 형식 오류)"
+          }
+        },
+        {
+          "code": -32001,
+          "message": "User not found", 
+          "data": {
+            "description": "해당 사용자를 찾을 수 없습니다"
+          }
+        },
+        {
+          "code": -32603,
+          "message": "Internal error",
+          "data": {
+            "description": "서버 내부 오류가 발생했습니다"
+          }
+        }
+      ],
+      "examples": [
+        {
+          "name": "기본 사용자 조회",
+          "description": "존재하는 사용자의 데이터를 조회하는 예시",
+          "params": [
+            {
+              "name": "userId",
+              "value": "user123"
+            }
+          ],
+          "result": {
+            "name": "UserAggregates",
+            "value": {
+              "profile": {
+                "nickname": "플레이어123",
+                "level": 15,
+                "exp": 2450,
+                "avatar": "warrior_01",
+                "created_at": "2024-01-01T00:00:00Z"
+              },
+              "inventory": {
+                "items": [],
+                "gold": 1500,
+                "gems": 75,
+                "capacity": 50
+              }
+            }
+          }
+        }
+      ]
+    }
+  ],
+  "components": {
+    "schemas": {
+      "UserAggregates": {
+        "type": "object",
+        "title": "UserAggregates",
+        "description": "사용자의 모든 게임 데이터를 포함하는 집계 객체",
+        "properties": {
+          "profile": {
+            "$ref": "#/components/schemas/ProfileEntity"
+          },
+          "inventory": {
+            "$ref": "#/components/schemas/InventoryEntity"
+          }
+        },
+        "required": ["profile", "inventory"],
+        "additionalProperties": false
+      },
+      "ProfileEntity": {
+        "type": "object",
+        "title": "ProfileEntity", 
+        "description": "사용자 프로필 정보",
+        "properties": {
+          "nickname": {
+            "type": "string",
+            "description": "사용자 닉네임",
+            "minLength": 1,
+            "maxLength": 50
+          },
+          "level": {
+            "type": "integer",
+            "description": "사용자 레벨",
+            "minimum": 1,
+            "maximum": 100
+          },
+          "exp": {
+            "type": "integer", 
+            "description": "현재 경험치",
+            "minimum": 0
+          },
+          "avatar": {
+            "type": "string",
+            "description": "아바타 ID",
+            "minLength": 1,
+            "maxLength": 50
+          },
+          "created_at": {
+            "type": "string",
+            "format": "date-time",
+            "description": "계정 생성일시 (ISO 8601)"
+          }
+        },
+        "required": ["nickname", "level", "exp", "avatar", "created_at"],
+        "additionalProperties": false
+      },
+      "InventoryEntity": {
+        "type": "object",
+        "title": "InventoryEntity",
+        "description": "사용자 인벤토리 정보",
+        "properties": {
+          "items": {
+            "type": "array",
+            "description": "보유 아이템 목록",
+            "items": {
+              "type": "object"
+            },
+            "default": []
+          },
+          "gold": {
+            "type": "integer",
+            "description": "보유 골드",
+            "minimum": 0
+          },
+          "gems": {
+            "type": "integer", 
+            "description": "보유 젬",
+            "minimum": 0
+          },
+          "capacity": {
+            "type": "integer",
+            "description": "인벤토리 최대 용량",
+            "minimum": 1,
+            "maximum": 1000
+          }
+        },
+        "required": ["items", "gold", "gems", "capacity"],
+        "additionalProperties": false
+      }
+    },
+    "errors": {
+      "InvalidParams": {
+        "code": -32602,
+        "message": "Invalid params",
+        "data": {
+          "type": "object", 
+          "properties": {
+            "field": {
+              "type": "string",
+              "description": "오류가 발생한 필드명"
+            },
+            "reason": {
+              "type": "string",
+              "description": "오류 상세 이유"
+            }
+          }
+        }
+      },
+      "UserNotFound": {
+        "code": -32001,
+        "message": "User not found",
+        "data": {
+          "type": "object",
+          "properties": {
+            "userId": {
+              "type": "string",
+              "description": "존재하지 않는 사용자 ID"
+            }
+          }
+        }
+      },
+      "InternalError": {
+        "code": -32603,
+        "message": "Internal error",
+        "data": {
+          "type": "object",
+          "properties": {
+            "message": {
+              "type": "string", 
+              "description": "내부 오류 메시지"
+            },
+            "timestamp": {
+              "type": "string",
+              "format": "date-time",
+              "description": "오류 발생 시각"
+            }
+          }
+        }
+      }
+    }
+  },
+  "tags": [
+    {
+      "name": "User",
+      "description": "사용자 관련 API"
+    }
+  ]
+}
