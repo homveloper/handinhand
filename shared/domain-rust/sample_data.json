@@ -1,0 +1,30 @@
+{
+  "profile": {
+    "nickname": "PlayerOne",
+    "level": 15,
+    "exp": 2500,
+    "avatar": "warrior_01",
+    "created_at": "2024-01-15T10:30:00Z"
+  },
+  "inventory": {
+    "items": [
+      {
+        "id": "sword_001",
+        "quantity": 1,
+        "level": 5,
+        "rarity": "rare",
+        "properties": {
+          "attack": 150,
+          "durability": 85
+        }
+      },
+      {
+        "id": "potion_health",
+        "quantity": 10
+      }
+    ],
+    "gold": 15000,
+    "gems": 25,
+    "capacity": 100
+  }
+}

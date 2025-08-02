@@ -11,6 +11,9 @@ HANDINHAND_ROOT="$(dirname "$PROJECT_ROOT")"
 # 기본 설정 파일 경로
 DEFAULT_CONFIG="$HANDINHAND_ROOT/shared/config/server-config.json"
 
+# 기본 WASM 파일 경로
+DEFAULT_WASM="$HANDINHAND_ROOT/shared/domain-rust/pkg-wasmtime/domain_rust.wasm"
+
 # 도움말 출력
 show_help() {
     echo "Hand in Hand Python Server 실행 스크립트"
@@ -21,12 +24,14 @@ show_help() {
     echo "옵션:"
     echo "  -c, --config FILE    설정 파일 경로 (기본값: ../shared/config/server-config.json)"
     echo "  -e, --env ENV        환경별 설정 파일 사용 (development|testing|production)"
+    echo "  -w, --wasm FILE      WASM 모듈 파일 경로 (기본값: ../shared/domain-rust/pkg-wasmtime/domain_rust.wasm)"
     echo "  -h, --help           도움말 표시"
     echo ""
     echo "예시:"
     echo "  ./run.sh                                    # 기본 설정으로 실행"
     echo "  ./run.sh -e development                     # 개발 환경 설정으로 실행"
     echo "  ./run.sh -c /path/to/custom-config.json     # 커스텀 설정 파일로 실행"
+    echo "  ./run.sh -w /path/to/custom.wasm           # 커스텀 WASM 파일로 실행"
     echo ""
 }
 
@@ -126,6 +131,7 @@ except Exception as e:
 # 서버 실행
 run_server() {
     local config_file="$1"
+    local wasm_file="$2"
     
     echo ""
     echo "🚀 Hand in Hand Python Server 시작"
@@ -134,19 +140,30 @@ run_server() {
     # 현재 디렉토리를 프로젝트 루트로 변경
     cd "$PROJECT_ROOT"
     
+    # 서버 실행 명령 구성
+    local cmd="python3 cmd/server.py --config \"$config_file\""
+    if [ -n "$wasm_file" ]; then
+        cmd="$cmd --wasm \"$wasm_file\""
+    fi
+    
     # 서버 실행
-    python3 cmd/server.py --config "$config_file"
+    eval $cmd
 }
 
 # 메인 실행 로직
 main() {
     local config_file="$DEFAULT_CONFIG"
+    local wasm_file="$DEFAULT_WASM"
     
     # 명령행 인자 파싱
     while [[ $# -gt 0 ]]; do
         case $1 in
             -c|--config)
                 config_file="$2"
+                shift 2
+                ;;
+            -w|--wasm)
+                wasm_file="$2"
                 shift 2
                 ;;
             -e|--env)
@@ -182,10 +199,12 @@ main() {
     
     # 절대 경로로 변환
     config_file="$(realpath "$config_file")"
+    wasm_file="$(realpath "$wasm_file")"
     
     echo "🎯 Hand in Hand Python Server"
     echo "📁 프로젝트 경로: $PROJECT_ROOT"
     echo "⚙️  설정 파일: $config_file"
+    echo "🦀 WASM 모듈: $wasm_file"
     echo ""
     
     # 사전 검사
@@ -194,7 +213,7 @@ main() {
     check_redis "$config_file"
     
     # 서버 실행
-    run_server "$config_file"
+    run_server "$config_file" "$wasm_file"
 }
 
 # 스크립트가 직접 실행된 경우에만 main 함수 호출

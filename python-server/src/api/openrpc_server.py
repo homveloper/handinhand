@@ -15,6 +15,7 @@ import os
 sys.path.append(os.path.dirname(os.path.dirname(os.path.dirname(__file__))))
 
 from src.application.user.services.user_service import UserService
+from src.api.controllers.calculator_controller import CalculatorController
 
 
 class JsonRpcRequest(BaseModel):
@@ -50,8 +51,11 @@ class OpenRpcServer:
     
     def __init__(self, user_service: UserService):
         self.user_service = user_service
+        self.calculator_controller = CalculatorController(user_service.user_domain_service)
         self.methods = {
-            "getUserAggregates": self._get_user_aggregates
+            "getUserAggregates": self._get_user_aggregates,
+            "calculator.add": self._calculator_add,
+            "profile.addExp": self._profile_add_exp
         }
     
     async def handle_request(self, request_data: Dict[str, Any]) -> Dict[str, Any]:
@@ -141,6 +145,47 @@ class OpenRpcServer:
             }
         }
     
+    async def _calculator_add(self, params: Dict[str, Any]) -> Dict[str, Any]:
+        """
+        calculator.add 메서드 구현 (Rust WASM 사용)
+        
+        Args:
+            params: 메서드 파라미터 {"a": 10, "b": 20}
+            
+        Returns:
+            Dict[str, Any]: 계산 결과
+            
+        Raises:
+            Exception: 에러 발생 시
+        """
+        result, error = await self.calculator_controller.Add(params)
+        
+        if error:
+            raise ValueError(error.split(": ", 1)[1] if ": " in error else error)
+        
+        return result
+    
+    async def _profile_add_exp(self, params: Dict[str, Any]) -> Dict[str, Any]:
+        """
+        profile.addExp 메서드 구현 (Rust WASM 사용)
+        내부에서 기본 프로파일을 생성하고 경험치만 추가
+        
+        Args:
+            params: 메서드 파라미터 {"exp_to_add": 100}
+            
+        Returns:
+            Dict[str, Any]: 경험치 추가 결과
+            
+        Raises:
+            Exception: 에러 발생 시
+        """
+        result, error = await self.calculator_controller.AddExpToProfile(params)
+        
+        if error:
+            raise ValueError(error.split(": ", 1)[1] if ": " in error else error)
+        
+        return result
+    
     def _create_success_response(self, result: Any, request_id: Any) -> Dict[str, Any]:
         """성공 응답 생성"""
         return {
@@ -198,6 +243,135 @@ class OpenRpcServer:
                             "name": "UserAggregates",
                             "schema": {"type": "object"}
                         }
+                    },
+                    {
+                        "name": "calculator.add",
+                        "summary": "두 숫자를 더하는 계산기 함수 (Rust WASM)",
+                        "description": "Rust WebAssembly 모듈을 사용하여 두 숫자를 더합니다. WASM이 사용 불가능한 경우 Python fallback을 사용합니다.",
+                        "params": [
+                            {
+                                "name": "a",
+                                "schema": {"type": "number"},
+                                "required": True,
+                                "description": "첫 번째 숫자"
+                            },
+                            {
+                                "name": "b", 
+                                "schema": {"type": "number"},
+                                "required": True,
+                                "description": "두 번째 숫자"
+                            }
+                        ],
+                        "result": {
+                            "name": "CalculatorResult",
+                            "schema": {
+                                "type": "object",
+                                "properties": {
+                                    "result": {
+                                        "type": "number",
+                                        "description": "계산 결과"
+                                    },
+                                    "implementation": {
+                                        "type": "string",
+                                        "enum": ["rust_wasm", "python_fallback"],
+                                        "description": "사용된 구현체"
+                                    },
+                                    "wasm_enabled": {
+                                        "type": "boolean",
+                                        "description": "WASM 사용 가능 여부"
+                                    }
+                                },
+                                "required": ["result", "implementation", "wasm_enabled"]
+                            }
+                        },
+                        "examples": [
+                            {
+                                "name": "Simple Addition",
+                                "params": {
+                                    "a": 10,
+                                    "b": 20
+                                },
+                                "result": {
+                                    "result": 30,
+                                    "implementation": "rust_wasm",
+                                    "wasm_enabled": True
+                                }
+                            }
+                        ]
+                    },
+                    {
+                        "name": "profile.addExp",
+                        "summary": "프로필에 경험치를 추가하고 레벨업 처리 (Rust WASM)",
+                        "description": "기본 프로필에 경험치를 추가하고 레벨업, 진행도 등을 계산합니다. Rust WebAssembly 모듈을 사용하여 게임 로직을 처리합니다. 내부에서 기본 프로파일(레벨1, 경험치0)을 생성합니다.",
+                        "params": [
+                            {
+                                "name": "exp_to_add", 
+                                "schema": {"type": "integer", "minimum": 0},
+                                "required": True,
+                                "description": "추가할 경험치 양"
+                            }
+                        ],
+                        "result": {
+                            "name": "ProfileExpResult",
+                            "schema": {
+                                "type": "object",
+                                "properties": {
+                                    "profile": {
+                                        "type": "object",
+                                        "description": "업데이트된 프로필 데이터"
+                                    },
+                                    "level_increased": {
+                                        "type": "boolean",
+                                        "description": "레벨이 상승했는지 여부"
+                                    },
+                                    "exp_to_next_level": {
+                                        "type": "integer",
+                                        "description": "다음 레벨까지 필요한 경험치"
+                                    },
+                                    "level_progress_percentage": {
+                                        "type": "number",
+                                        "description": "현재 레벨의 진행도 (0-100%)"
+                                    },
+                                    "implementation": {
+                                        "type": "string",
+                                        "enum": ["rust_wasm", "python_fallback"],
+                                        "description": "사용된 구현체"
+                                    },
+                                    "wasm_enabled": {
+                                        "type": "boolean",
+                                        "description": "WASM 사용 가능 여부"
+                                    },
+                                    "success": {
+                                        "type": "boolean",
+                                        "description": "작업 성공 여부"
+                                    }
+                                },
+                                "required": ["profile", "level_increased", "exp_to_next_level", "level_progress_percentage", "implementation", "wasm_enabled", "success"]
+                            }
+                        },
+                        "examples": [
+                            {
+                                "name": "Add 500 EXP to Default Profile",
+                                "params": {
+                                    "exp_to_add": 500
+                                },
+                                "result": {
+                                    "profile": {
+                                        "nickname": "TestPlayer",
+                                        "level": 3,
+                                        "exp": 500,
+                                        "avatar": "default_avatar",
+                                        "created_at": "2024-08-02T15:30:00Z"
+                                    },
+                                    "level_increased": True,
+                                    "exp_to_next_level": 19,
+                                    "level_progress_percentage": 96.3,
+                                    "implementation": "rust_wasm",
+                                    "wasm_enabled": True,
+                                    "success": True
+                                }
+                            }
+                        ]
                     }
                 ]
             }

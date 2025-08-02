@@ -2,7 +2,7 @@ from abc import ABC, abstractmethod
 from typing import Optional, Callable
 from dataclasses import dataclass
 
-from ..entities import UserAggregates
+from ..aggregates import UserAggregates
 
 
 @dataclass

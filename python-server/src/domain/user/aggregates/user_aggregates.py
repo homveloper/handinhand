@@ -36,7 +36,7 @@ class Item:
             properties=schema_item.properties,
             rarity=schema_item.rarity
         )
-    
+
     def to_schema(self) -> SchemaItem:
         """비즈니스 객체에서 스키마 객체로 변환"""
         return SchemaItem(

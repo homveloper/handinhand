@@ -1,0 +1,2 @@
+# WASM 실행을 위한 추가 dependencies
+wasmtime==20.0.0

@@ -15,7 +15,7 @@ from .user_repository import (
     UserRepositoryResult, 
     UserRepositoryOptions
 )
-from ..entities import UserAggregates
+from ..aggregates import UserAggregates
 
 
 class RedisUserRepository(UserRepository):

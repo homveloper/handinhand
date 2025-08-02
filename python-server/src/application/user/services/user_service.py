@@ -6,14 +6,16 @@
 from typing import Optional
 
 from src.domain.user.repositories.user_repository import UserRepository
-from src.domain.user.entities import UserAggregates
+from src.domain.user.aggregates import UserAggregates
+from src.application.user.services.user_domain_service import UserDomainService
 
 
 class UserService:
     """사용자 관련 애플리케이션 서비스"""
     
-    def __init__(self, user_repository: UserRepository):
+    def __init__(self, user_repository: UserRepository, user_domain_service: Optional[UserDomainService] = None):
         self.user_repository = user_repository
+        self.user_domain_service = user_domain_service
     
     async def get_user_aggregates(self, user_id: str) -> tuple[UserAggregates | None, str | None]:
         """
