@@ -1,0 +1,149 @@
+/* Swagger UI 커스텀 스타일 */
+
+/* 헤더 스타일링 */
+.swagger-ui .topbar {
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    border-bottom: 3px solid #4f46e5;
+}
+
+.swagger-ui .topbar .download-url-wrapper {
+    display: none;
+}
+
+/* 제목 스타일링 */
+.swagger-ui .info hgroup.main .title {
+    color: #1f2937;
+    font-size: 2.5rem;
+    font-weight: bold;
+    margin-bottom: 1rem;
+}
+
+.swagger-ui .info .description {
+    font-size: 1.1rem;
+    line-height: 1.6;
+    margin-bottom: 2rem;
+}
+
+/* 태그 섹션 스타일링 */
+.swagger-ui .opblock-tag-section {
+    margin-bottom: 2rem;
+}
+
+.swagger-ui .opblock-tag {
+    background: linear-gradient(135deg, #f3f4f6 0%, #e5e7eb 100%);
+    border-left: 4px solid #4f46e5;
+    color: #1f2937;
+    font-size: 1.3rem;
+    font-weight: 600;
+    padding: 15px 20px;
+    margin-bottom: 1rem;
+}
+
+/* 엔드포인트 박스 스타일링 */
+.swagger-ui .opblock {
+    margin-bottom: 1rem;
+    border-radius: 8px;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+}
+
+.swagger-ui .opblock.opblock-post {
+    border-color: #059669;
+    background: rgba(5, 150, 105, 0.1);
+}
+
+.swagger-ui .opblock.opblock-get {
+    border-color: #0891b2;
+    background: rgba(8, 145, 178, 0.1);
+}
+
+/* JSON-RPC 요청 예시 강조 */
+.swagger-ui .model-example {
+    background: #f8fafc;
+    border: 1px solid #e2e8f0;
+    border-radius: 6px;
+    padding: 1rem;
+}
+
+/* 파라미터 섹션 스타일링 */
+.swagger-ui .parameters-col_description {
+    font-size: 0.9rem;
+    color: #6b7280;
+}
+
+/* 응답 코드 스타일링 */
+.swagger-ui .response-col_status {
+    font-weight: bold;
+}
+
+.swagger-ui .response-col_status .response-undocumented {
+    color: #059669;
+}
+
+/* Try it out 버튼 스타일링 */
+.swagger-ui .btn.try-out__btn {
+    background: #4f46e5;
+    color: white;
+    border: none;
+    border-radius: 6px;
+    padding: 8px 16px;
+    font-weight: 500;
+}
+
+.swagger-ui .btn.try-out__btn:hover {
+    background: #4338ca;
+}
+
+.swagger-ui .btn.execute {
+    background: #059669;
+    color: white;
+    border: none;
+    border-radius: 6px;
+    padding: 10px 20px;
+    font-weight: 600;
+}
+
+.swagger-ui .btn.execute:hover {
+    background: #047857;
+}
+
+/* 스키마 섹션 개선 */
+.swagger-ui .model {
+    background: #fefefe;
+    border: 1px solid #e5e7eb;
+    border-radius: 6px;
+}
+
+.swagger-ui .model-title {
+    background: #f9fafb;
+    color: #374151;
+    font-weight: 600;
+    padding: 12px 15px;
+}
+
+/* JSON-RPC 하이라이트 */
+.swagger-ui .opblock-summary-description {
+    font-weight: 500;
+}
+
+/* 커스텀 배지 스타일 */
+.jsonrpc-badge {
+    background: #8b5cf6;
+    color: white;
+    font-size: 0.75rem;
+    padding: 2px 8px;
+    border-radius: 4px;
+    margin-left: 8px;
+    font-weight: 500;
+}
+
+/* 반응형 개선 */
+@media (max-width: 768px) {
+    .swagger-ui .info hgroup.main .title {
+        font-size: 2rem;
+    }
+    
+    .swagger-ui .opblock-tag {
+        font-size: 1.1rem;
+        padding: 12px 15px;
+    }
+}
